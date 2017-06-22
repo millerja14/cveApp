@@ -1,0 +1,28 @@
+{
+  "name": "cveApp",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node --max-old-space-size=3072 ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.1",
+    "connect-timeout": "^1.7.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "events": "^1.1.1",
+    "express": "~4.13.4",
+    "file-system": "^2.2.1",
+    "hjs": "~0.0.6",
+    "http": "0.0.0",
+    "https": "^1.0.0",
+    "less-middleware": "1.0.x",
+    "mongoose": "^4.5.2",
+    "morgan": "~1.7.0",
+    "node-schedule": "^1.1.1",
+    "serve-favicon": "~2.3.0",
+    "unzip": "^0.1.11",
+    "xmldom": "^0.1.22",
+    "xmlhttprequest": "*"
+  }
+}

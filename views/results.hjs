@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    <link rel='stylesheet' href='/stylesheets/searchPage.css' />
+	</head>
+	<body>
+		<p>Displaying {{Results}} results.<p>
+        <p>Search parameters are displayed in the URL.</p>
+		<form action='/dbSearch' method='get'>
+    		<input type='submit' value='Perform another search'>
+		</form>
+		<ul>
+			{{#vulnList}}
+				<li>
+    			<b>CVE Id: {{CVEId}}</b><br>
+                <fieldset>
+    			<Legend>Products</Legend>
+    			<ul class='products'>
+    			{{#Products}}
+    			<li>{{.}}</li>
+    			{{/Products}}
+    			</ul>
+                </fieldset>
+                <fieldset>
+    			<Legend>Description</Legend>
+                {{Description}}
+                </fieldset>
+                <fieldset>
+                <Legend>Dates</Legend>
+    			Added: {{DCDateAdded}}<br>
+   			 	Last modified: {{DCDateModified}}
+                </fieldset>
+                <fieldset>
+                <Legend>Details</Legend>
+    			Attack Vector: {{AttackVector}}<br>
+    			Attack Complexity: {{AttackComplexity}}<br>
+                Authentication: {{Authentication}}<br>
+                Confidentiality Impact: {{ConfidentialityImpact}}<br>
+                Integrity Impact: {{IntegrityImpact}}<br>
+                Availability Impact: {{AvailabilityImpact}}
+                </fieldset>
+                <fieldset>
+                <Legend>Score</Legend>
+                {{Score}}
+                </fieldset>
+                <fieldset>
+                <Legend>References</Legend>
+    			<ul class='references'>
+    			{{#References}}
+    			<li><a target='_blank' href={{.}}>{{.}}</a></li>
+    			{{/References}}
+    			</ul>
+                </fieldset>
+    			</li>
+    			<br>
+			{{/vulnList}}
+		</ul>
+		<script>
+		var url = window.location.href;
+		var sort = function() {
+			var option = document.getElementById('sorter');
+			window.location.replace(url + '&sort=' + option.options[option.selectedIndex].value);
+		}
+		</script>
+		<p>
+	</body>
+</html>

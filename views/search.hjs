@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	   		<link rel='stylesheet' href='/stylesheets/searchPage.css' />
+	   		<title>Search for Vulnerabilities</title>
+	</head>
+		<body>
+	    	<div class='title'>Welcome to the vulnerabilities database</div>
+	    	<p>The vulnerabilities server is {{readyState}}.</p>
+	    	<p>
+	    	<div class='half'>
+	    	<fieldset>
+	    	<Legend>Latest versions:</Legend>
+			<ul>
+	    	{{#released}}
+	    	<li>{{.}}</li>
+	    	{{/released}}
+	    	</ul>
+	    	</fieldset>
+	    	</div>
+	    	<div class='half'>
+	    	<fieldset>
+	    	<Legend>Latest versions in database:</Legend>
+	    	<ul>
+	    	{{#updated}}
+	    	<li>{{.}}</li>
+	    	{{/updated}}
+	    	</ul>
+	    	</fieldset>
+	    	</div>
+	    	<fieldset>
+	    	<Legend>Force updates for main database:</Legend>
+	    	<input type="button" onclick="location.href='/dbForceUpdate'; alert('You will be notified when the database is up to date. You may continue use of the search engine. Press Ok to continue with update.\n\nIf the page times out, the will still continue.')" value="Force Updates"/>
+			<font><font style='color:red'>WARNING:</font> An update will take several minutes and the page will operate very slowly during update.<br><br>Automatic updates are scheduled for 3AM every day.</font>
+	    	</fieldset>
+	    	<br>
+	    	<form action='/dbResults' method='get'>
+	    	<fieldset>
+	    		<Legend>Search by Id</Legend>
+				CVE -
+	    		<select name='year'>
+					<option value='1999'>1999</option>
+					<option value='2000'>2000</option>
+					<option value='2001'>2001</option>
+		    		<option value='2002'>2002</option>
+		    		<option value='2003'>2003</option>
+		    		<option value='2004'>2004</option>
+		    		<option value='2005'>2005</option>
+		    		<option value='2006'>2006</option>
+		    		<option value='2007'>2007</option>
+		    		<option value='2008'>2008</option>
+		    		<option value='2009'>2009</option>
+		    		<option value='2010'>2010</option>
+	    			<option value='2011'>2011</option>
+	    			<option value='2012'>2012</option>
+	    			<option value='2013'>2013</option>
+	    			<option value='2014'>2014</option>
+	    			<option value='2015'>2015</option>
+	    			<option value='2016' selected>2016</option>
+	    		</select>
+	    		-
+	    		<input type='text' id='cveId' name='cveId' maxlength="4">
+	    		<button type='submit' name='type' value='id'>Submit</button>
+	    	</fieldset>
+	    	</form>
+	    	<br>
+			<form action='/dbResults' method='get'>
+	    	<fieldset>
+	    		<Legend>Search by Keywords</Legend>
+	    		Year: 
+	    		<select name='year'>
+	    			<option value='' selected>-All-</option>
+					<option value='1999'>1999</option>
+					<option value='2000'>2000</option>
+					<option value='2001'>2001</option>
+		    		<option value='2002'>2002</option>
+		    		<option value='2003'>2003</option>
+		    		<option value='2004'>2004</option>
+		    		<option value='2005'>2005</option>
+		    		<option value='2006'>2006</option>
+		    		<option value='2007'>2007</option>
+		    		<option value='2008'>2008</option>
+		    		<option value='2009'>2009</option>
+		    		<option value='2010'>2010</option>
+	    			<option value='2011'>2011</option>
+	    			<option value='2012'>2012</option>
+	    			<option value='2013'>2013</option>
+	    			<option value='2014'>2014</option>
+	    			<option value='2015'>2015</option>
+	    			<option value='2016'>2016</option>
+	    		</select>
+	    		<br>Attack Vector: 
+	    		<select name='vector'>
+	    			<option value='' selected>-All-</option>
+	    			<option value='network'>NETWORK</option>
+	    			<option value='local'>LOCAL</option>
+	    		</select><br><br>
+	    		Product name must include:<br>
+	    		<input type='text' name='product'>
+	    		<!--Manufacturer must include:<br>-->
+	    		<input type='text' name='manufacturer' hidden><br>
+	    		Key Words:<br>
+	    		<input type='text' id='keyWords' name='key' onchange='disableRelevance()''><br>
+	    		Minimum Score:<br>
+	    		<input type='range' id='minInput' name='scoreMin' min='0' max='10' value='0' step='.1' oninput="amountMin.value=minInput.value">
+	    		<output name="amountMin" for="minInput">0</output><br>
+	    		Maximum Score:<br>
+	    		<input type='range' id='maxInput' name='scoreMax' min='0' max='10' value='10' step='.1' oninput="amountMax.value=maxInput.value">
+	    		<output name="amountMax" for="maxInput">10</output><br>
+	    		Sort By:<br>
+  				<input type="radio" id='descending' name="sort" value="scoreDescending" checked> Highest scores first<br>
+  				<input type="radio" name="sort" value="scoreAscending"> Lowest scores first<br>
+  				<input type='radio' name='sort' value='dateDescending'> Most recently modified<br>
+  				<input type='radio' name='sort' value='dateAscending'> Least recently modified<br>
+  				<input type="radio" id='relevance' name="sort" value="relevance" disabled> Relevance<br>
+	    		<br>
+	    		Maximum number of results to display:<br>
+	    		<input type='number' step='1' name='limit' value='200'>
+	    		<br><br><button type='submit' name='type' value='keywords'>Submit</button>
+	    	</fieldset>
+	    	</form>
+	    	<br>
+	    	<fieldset>
+	    	<legend>Past 50 entries from a more frequently updated database:</legend>
+	    	<div class='scroll'>
+	    		<ul>
+	    			{{#briefVulnList}}
+	    				<li>
+	    					CVEId: {{CVEId}}<br>
+  							Product: {{Product}}<br>
+  							Manufacturer: {{Manufacturer}}<br>
+  							Description: {{Description}}<br>
+  							Date Created: {{DCDate}}
+	    				</li>
+	    				<br>
+	    			{{/briefVulnList}}
+	    		</ul>
+	    	</div>
+	    	</fieldset>
+	    	<p id='updatedAlert' hidden>{{ updatedAlert }}</p>
+	    	<script>
+	    		var disableRelevance = function() {
+	    			if (document.getElementById('keyWords').value == '') {
+	    				if (document.getElementById('relevance').checked == true) {
+	    					document.getElementById('descending').checked = true;
+	    				}
+	    				document.getElementById('relevance').disabled = true;
+	    			}
+	    			else {
+	    				document.getElementById('relevance').disabled = false;
+	    			}
+	    		}
+
+	    		if (document.getElementById('updatedAlert').innerHTML == 'true') {
+	    			alert('Database up to date!');
+	    		}
+	    	</script>
+	  	</body>
+</html>
