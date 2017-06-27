@@ -8,26 +8,15 @@
 	    	<div class='title'>Welcome to the vulnerabilities database</div>
 	    	<p>The vulnerabilities server is {{readyState}}.</p>
 	    	<p>
-	    	<div class='half'>
 	    	<fieldset>
-	    	<Legend>Latest versions:</Legend>
+	    	<Legend>Out of Date Files:</Legend>
 			<ul>
-	    	{{#released}}
+	    	{{#needsUpdate}}
 	    	<li>{{.}}</li>
-	    	{{/released}}
+	    	{{/needsUpdate}}
 	    	</ul>
 	    	</fieldset>
-	    	</div>
-	    	<div class='half'>
-	    	<fieldset>
-	    	<Legend>Latest versions in database:</Legend>
-	    	<ul>
-	    	{{#updated}}
-	    	<li>{{.}}</li>
-	    	{{/updated}}
-	    	</ul>
-	    	</fieldset>
-	    	</div>
+	    	<br>
 	    	<fieldset>
 	    	<Legend>Force updates for main database:</Legend>
 	    	<input type="button" onclick="location.href='/dbForceUpdate'; alert('You will be notified when the database is up to date. You may continue use of the search engine. Press Ok to continue with update.\n\nIf the page times out, the will still continue.')" value="Force Updates"/>
@@ -56,7 +45,8 @@
 	    			<option value='2013'>2013</option>
 	    			<option value='2014'>2014</option>
 	    			<option value='2015'>2015</option>
-	    			<option value='2016' selected>2016</option>
+	    			<option value='2016'>2016</option>
+	    			<option value='2017' selected>2017</option>
 	    		</select>
 	    		-
 	    		<input type='text' id='cveId' name='cveId' maxlength="4">
@@ -97,8 +87,6 @@
 	    		</select><br><br>
 	    		Product name must include:<br>
 	    		<input type='text' name='product'>
-	    		<!--Manufacturer must include:<br>-->
-	    		<input type='text' name='manufacturer' hidden><br>
 	    		Key Words:<br>
 	    		<input type='text' id='keyWords' name='key' onchange='disableRelevance()''><br>
 	    		Minimum Score:<br>
@@ -119,24 +107,6 @@
 	    		<br><br><button type='submit' name='type' value='keywords'>Submit</button>
 	    	</fieldset>
 	    	</form>
-	    	<br>
-	    	<fieldset>
-	    	<legend>Past 50 entries from a more frequently updated database:</legend>
-	    	<div class='scroll'>
-	    		<ul>
-	    			{{#briefVulnList}}
-	    				<li>
-	    					CVEId: {{CVEId}}<br>
-  							Product: {{Product}}<br>
-  							Manufacturer: {{Manufacturer}}<br>
-  							Description: {{Description}}<br>
-  							Date Created: {{DCDate}}
-	    				</li>
-	    				<br>
-	    			{{/briefVulnList}}
-	    		</ul>
-	    	</div>
-	    	</fieldset>
 	    	<p id='updatedAlert' hidden>{{ updatedAlert }}</p>
 	    	<script>
 	    		var disableRelevance = function() {

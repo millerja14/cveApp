@@ -282,7 +282,6 @@ var listCompile = function(vulnXmlFile, callback, force) {
 	//and products xml files.
 	var cveIds = [];
 	var products2 = [];
-	var manufacturers = [];
 	var descriptions = [];
 	var createdDates = [];
 	var modifiedDates = [];
@@ -337,7 +336,6 @@ var listCompile = function(vulnXmlFile, callback, force) {
 			}
 
 			//Retrieving and storing information from various datafiels of the current entry node
-			var manufacturer = product; //Not yet implemented.
 			var description = entry[i].getElementsByTagName('vuln:summary')[0].childNodes[0].nodeValue;
 			var createdDate = entry[i].getElementsByTagName('vuln:published-datetime')[0].childNodes[0].nodeValue;
 			var modifiedDate = entry[i].getElementsByTagName('vuln:last-modified-datetime')[0].childNodes[0].nodeValue;
@@ -364,7 +362,6 @@ var listCompile = function(vulnXmlFile, callback, force) {
 			//and saved to the db in an incrementing loop.
 			cveIds.push(cveId);
 			products2.push(products1);
-			manufacturers.push(manufacturer);
 			descriptions.push(description);
 			createdDates.push(createdDate);
 			modifiedDates.push(modifiedDate);
@@ -391,13 +388,13 @@ var listCompile = function(vulnXmlFile, callback, force) {
 	//of the lists of data as well as undCount for use in incrementation and the callback. 'entry'
 	//is passed to determine again its length (the number of entries in the xml file).
 	console.log('Vulnerability list compiled.');
-	newEntry(cveIds, products2, manufacturers, descriptions, createdDates, modifiedDates, 
+	newEntry(cveIds, products2, descriptions, createdDates, modifiedDates, 
 		scores, attackVectors, attackComplexities, authentications, confImpacts, 
 		intImpacts, availImpacts, references2, entry, undCount, callback, force);
 }
 
 //Adds an entry to the vulnerabilities db for each entry in the data lists.
-var newEntry = function(cveIds, products, manufacturers, descriptions, createdDates,
+var newEntry = function(cveIds, products, descriptions, createdDates,
 	modifiedDates, scores, attackVectors, attackComplexities, authentications, confImpacts,
 	intImpacts, availImpacts, references, entry, undCount, callback, force) {
 
@@ -411,7 +408,6 @@ var newEntry = function(cveIds, products, manufacturers, descriptions, createdDa
 			Count: inc + prevInc,
 			CVEId: cveIds[inc],
 			Products: products[inc],
-			Manufacturer: manufacturers[inc],
 			Description: descriptions[inc],
 			DCDateAdded: createdDates[inc],
 			DCDateModified: modifiedDates[inc],

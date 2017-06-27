@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Edit {{ projectName }}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
+<body ng-app='projectEditApp' ng-controller='projectEditController'>
+	<form action='../projects'>
+    	<input type='submit' value='Back'>
+	</form> 
+	Editting {{ projectId }}.
+</body>
+<script>
+	var projectEditApp = angular.module('projectEditApp', [], function($interpolateProvider) {
+	        $interpolateProvider.startSymbol('{%');
+	        $interpolateProvider.endSymbol('%}');
+	});
+
+	projectEditApp.controller('projectEditController', function($scope, $http, $window) {
+
+	});
+
+</script>
+</html>

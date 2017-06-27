@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form action='/auth/google'>
+    <input type='submit' value='Login'>
+</form> 
+</body>
+</html>

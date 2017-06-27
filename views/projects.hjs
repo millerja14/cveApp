@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Projects</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<body ng-app='projectsApp' ng-controller='projectsController'>
+
+<h1>Welcome {{ user.google.name}}</h1>
+<form action='/logout'>
+	<input type='submit' value='Logout'>
+</form> 
+
+<fieldset>
+	<legend>Shared Projects</legend>
+	<table>
+		<tr ng-repeat='a in sharedProjects'>
+			<td>{% a.Name %}</td>
+			<td><button type='button' ng-click='acceptProject(a.Id)'>Accept</button></td>
+		</tr>
+	</table>
+</fieldset>
+<br>
+<fieldset>
+	<legend>Projects</legend>
+	<table>
+		<tr ng-repeat='x in userProjects'>
+			<td>{% x.Name %}</td>
+			<td><button type='button' ng-click='editProject(x.Id)'>Edit</button></td>
+		</tr>
+	</table>
+</fieldset>
+<br>
+<fieldset>
+	<legend>Add Project</legend>
+    Project name:
+    <input type="text" ng-model='projectName'>
+    <br>Share with: <input type="text" ng-model='alertEmail'><button type='button' ng-click='addEmail()'>Add Email</button>
+    <table>
+    	<tr ng-repeat='x in shareEmails'>
+    		<td>{% x.Name %}</td>
+    		<td><button type='button' ng-click='removeEmail(x)'>Remove</button><td>
+    	</tr>
+    </table>
+    <button type='button' ng-click='addProject()'>Add Project</button>
+</fieldset>
+<script>
+	var projectsApp = angular.module('projectsApp', [], function($interpolateProvider) {
+	        $interpolateProvider.startSymbol('{%');
+	        $interpolateProvider.endSymbol('%}');
+	});
+
+	projectsApp.controller('projectsController', function($scope, $http, $window, $location) {
+		$scope.shareEmails = [];
+		$scope.userProjects = [];
+		$scope.sharedProjects = [];
+
+		$scope.addEmail = function() {
+			if($scope.shareEmails.indexOf($scope.alertEmail) < 0 && $scope.alertEmail != '' && typeof $scope.alertEmail != 'undefined') {
+				$scope.shareEmails.push($scope.alertEmail);
+				$scope.alertEmail = '';
+			} else {
+				$window.alert('You cannot add a blank email!');
+			}
+		}
+
+		$scope.removeEmail = function(email) {
+			var index = $scope.shareEmails.indexOf(email);
+
+			if(index > -1) {
+				$scope.shareEmails.splice(index, 1);
+			}
+		}
+
+		$scope.getUserProjectList = function() {
+			$http.get('/projects/getprojects').then(function(response) {
+				$scope.userProjects = response.data;
+			});
+		}
+
+		$scope.getSharedProjectList = function() {
+			$http.get('/projects/getsharedprojects').then(function(response) {
+				$scope.sharedProjects = response.data;
+			});
+		}
+
+		$scope.addProject = function() {
+			if ($scope.projectName != '' && typeof $scope.projectName != 'undefined') {
+				
+				var projectData = {
+					name: $scope.projectName,
+					emails: $scope.shareEmails
+				}
+
+				$http.post('/projects/addproject', JSON.stringify(projectData)).then(function(response) {
+					errorEmails = response.data;
+					$scope.projectName = '';
+					$scope.shareEmails = [];
+					if (errorEmails.length != 0) {
+						$window.alert('No account for:\n' + errorEmails);
+					}
+					$scope.getUserProjectList();
+				});
+			} else {
+				$window.alert('Must have project name!');
+			}
+
+			
+		}
+
+		$scope.editProject = function(projectId) {
+			$window.open('/projects/editproject?projectId=' + projectId.toString(), '_self');
+		}
+
+		$scope.getUserProjectList();
+		$scope.getSharedProjectList();
+
+	});
+</script>
+</body>
+</html>

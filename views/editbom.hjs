@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit BOM</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
+<body ng-app="softwareSearch">
+<div style="float: left; width: 50%">
+    <h1>Search for software</h1>
+    <form ng-controller="searchController">
+        <fieldset>   
+            <legend>Add component software:</legend>
+                <ul id="confirmedList">
+                    <p ng-repeat="c in confirmedResults">{% c %}</p>
+                </ul>
+                <br>Vendor: <p id = "vendorDisplay"></p>
+                <input id="vendor" ng-model="vendorSearch" ng-change="updateSearch()" placeholder="Vendor">
+                <input id="product" ng-model="productSearch" ng-change="updateSearch()" placeholder="Product">
+                <input id="version" ng-model="versionSearch" ng-change="updateSearch()" placeholder="Version">
+                <button type='button'>Select Custom</button>
+                <ul id="responseList">
+                    <li ng-repeat="x in productResults"><button type='button' ng-click='select(x)'>Select</button>{% x %}</li>
+
+                    {% productResults.data %}
+                </ul>
+            
+        </fieldset>
+        <button type="button" id="add" ng-click='addProduct()'>Add</button>
+    </form>
+</div>
+
+<div style="float: right; width: 50%" ng-controller='outputProducts'>
+    <h1>Software in {{ bomName }}</h1>
+    <button type='button' ng-click='getAddedProducts()'>Refresh</button>
+    <ul>
+        <li ng-repeat='k in productList'>{% k %}</li>
+        {% productList %}
+    </ul>
+</div>
+
+<script>
+    var app = angular.module('softwareSearch', [], function($interpolateProvider) {
+        $interpolateProvider.startSymbol('{%');
+        $interpolateProvider.endSymbol('%}');
+    });
+
+    app.controller('searchController', function($scope, $http, $window) {
+
+        $scope.confirmedResults = [];
+
+        $scope.updateSearch = function() {
+            $http.get('/editbom/search',
+                {params: {
+                    vendor: $scope.vendorSearch,
+                    product: $scope.productSearch,
+                    version: $scope.versionSearch,
+                    exclude: $scope.confirmedResults
+                }}
+            )
+            .then(function(response) {
+                    $scope.productResults = response;
+                }
+            )
+            .then(function() {
+                $scope.$apply();
+            });
+        }
+
+        $scope.select = function(selectedProduct) {
+            $scope.confirmedResults.push(selectedProduct);
+            $scope.productResults = $scope.productResults.filter(function(e) {
+                return e !== selectedProduct;
+            });
+        }
+
+        $scope.addProduct = function() {
+            $http.get('editbom/newproduct',
+                {params: {
+                    name: $scope.productName,
+                    alert: $scope.alertEmail,
+                    products: $scope.confirmedResults
+                }}
+            );
+        }
+    });
+
+    app.controller('outputProducts', function($scope, $window, $http) {
+
+
+        $scope.getAddedProducts = function() {
+            $http.get('editbom/reqlist')
+            .then(function(response) {
+                $scope.productList = response;
+            });
+        }
+
+        $scope.getAddedProducts();
+
+    });
+
+</script>
+
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</html>
